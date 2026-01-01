@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#define MAX 100
+char Stack[MAX];
+int top=-1;
+void push(char c){
+    if(top!=MAX-1){
+        Stack[++top]=c;
+    }
+}
+char pop(){
+    if(top>=0){
+        return Stack[top--];
+    }
+    return '\0';
+}
+
+char peek(){
+    if(top>=0){
+        return Stack[top];
+    }
+    return '\0';
+}
+
+int precedence(char op){
+    if(op=='+' || op=='-' ){
+        return 1;
+    }
+    if(op=='*' || op=='/'){
+        return 2;
+    }
+    if(op=='^'){
+        return 3;
+    }
+    return 0;
+}
+void infixtopostfix(char infix[]){
+    char postfix[MAX];
+    int j=0;
+    char c,temp;
+    for(int i=0;i<strlen(infix);i++){
+        c=infix[i];
+        if(isalnum(c)){
+            postfix[j++]=c;
+
+        }
+        else if(c=='('){
+            push(c);
+        }
+        else if(c==')'){
+            while((temp=pop())!='('){
+                postfix[j++]=temp;
+            }
+        }
+        else if(c=='+'||c=='-'||c=='*'||c=='/'||c=='^'){
+            while(precedence(peek())>=precedence(c)){
+                postfix[j++]=pop();
+            }
+            push(c);
+        }
+        
+    }
+    while (top != -1)
+    {
+        postfix[j++] = pop();
+    }
+    postfix[j] = '\0';
+    printf("Postfix function:%s", postfix);
+}
+int main(){
+    char infix[MAX];
+    printf("Enter a valid infix expression:");
+    scanf("%s",infix);
+    infixtopostfix(infix);
+    return 0;
+}
